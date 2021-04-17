@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Selfie App</title>
+</head>
+<body>
+    
+
+    <h1> Data Selfie App</h1>
+    
+    <p>
+    Latitude: <span id="latitude"> </span>&deg;<br>
+    Longitude: <span id="longitude"> </span>&deg;</p>
+    <label for="color">Enter your favorite color</label>
+    <input id="color" value="blue"/>
+    
+    <button id='geolocate'>Geolocate</button>
+
+    <script>
+        document.getElementById('geolocate').addEventListener('click', event => {
+        if ('geolocation' in navigator) {
+            console.log('geolocation available');
+            navigator.geolocation.getCurrentPosition( async position => {
+                const color = document.getElementById('color').value;
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
+                document.getElementById('latitude').textContent = lat;
+                document.getElementById('longitude').textContent = lon;
+                console.log(position.coords);
+    
+                const data = {lat, lon, color};
+                const options = {
+                    method: 'POST',
+                    //headers have a name a colon and a value
+                    headers: {
+                        'Content-Type': 'application/json'
+                     },
+                    body: JSON.stringify(data)
+                 };
+                
+                const response = await fetch('/api', options); 
+                const json = await response.json();
+                console.log(json);
+                });
+        } else {
+            console.log('geolocation not available');
+        }
+    });
+    </script>
+</body>
+
+</html>
